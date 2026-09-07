@@ -1,6 +1,6 @@
 <div class="filament-hidden">
 
-<!-- banner: art/jeffersongoncalves-laravel-package-cli.png (generate via portfolio-banner skill) -->
+![Laravel Package CLI](art/jeffersongoncalves-laravel-package-cli.png)
 
 </div>
 
