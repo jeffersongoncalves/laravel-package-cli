@@ -94,14 +94,16 @@ class CreateCommand extends Command
                 'illuminate/contracts' => '^12.0|^13.0',
             ],
             'require-dev' => [
+                'larastan/larastan' => '^3.0',
+                'laravel/pint' => '^1.21',
                 'orchestra/testbench' => '^10.0|^11.0',
                 'pestphp/pest' => '^3.0|^4.0',
-                'larastan/larastan' => '^2.0|^3.0',
-                'laravel/pint' => '^1.0',
+                'pestphp/pest-plugin-laravel' => '^3.0|^4.0',
             ],
             'autoload' => ['psr-4' => ["$namespace\\" => 'src/']],
             'autoload-dev' => ['psr-4' => ["$namespace\\Tests\\" => 'tests/']],
             'scripts' => [
+                'post-autoload-dump' => '@php ./vendor/bin/testbench package:discover --ansi',
                 'test' => 'vendor/bin/pest',
                 'test-coverage' => 'vendor/bin/pest --coverage',
                 'format' => 'vendor/bin/pint',
@@ -109,7 +111,10 @@ class CreateCommand extends Command
             ],
             'config' => [
                 'sort-packages' => true,
-                'allow-plugins' => ['pestphp/pest-plugin' => true],
+                'allow-plugins' => [
+                    'pestphp/pest-plugin' => true,
+                    'phpstan/extension-installer' => true,
+                ],
             ],
             'extra' => [
                 'laravel' => [
@@ -121,7 +126,7 @@ class CreateCommand extends Command
             'prefer-stable' => true,
         ];
 
-        $write('composer.json', json_encode($composerJson, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)."\n");
+        $write('composer.json', json_encode($composerJson, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)."\n");
         $write('.editorconfig', Scaffold::editorconfig());
         $write('.gitattributes', Scaffold::gitattributes());
         $write('.gitignore', Scaffold::gitignore());
