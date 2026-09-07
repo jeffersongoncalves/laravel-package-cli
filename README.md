@@ -51,20 +51,78 @@ php laravel-package app:build laravel-package
 ## Usage
 
 ```bash
-laravel-package create jeffersongoncalves/laravel-cep "Brazilian CEP (postal code) lookup for Laravel"
+laravel-package create vendor/package [description] [options]
 ```
+
+### Arguments
+
+| Argument | Required | Description |
+|----------|----------|--------------|
+| `vendor-package` | yes | `vendor/package` slug, e.g. `jeffersongoncalves/laravel-cep`. Split on `/` to derive vendor, package, namespace (`Vendor\Package`), Service Provider name, Facade name, and `config/<package>.php` filename. |
+| `description` | no | Short one-line package description. Used in `composer.json` and the generated `README.md`. Defaults to empty string when omitted. |
 
 ### Options
 
 | Option | Description |
 |--------|-------------|
-| `--path=DIR` | Target directory (default: `./<package>` under the current directory) |
-| `--author="Name"` | Defaults to `git config user.name` |
-| `--email=EMAIL` | Defaults to `git config user.email` |
-| `--no-git` | Skip `git init`/commit |
-| `--dry-run` | Print the planned file list and git commands, write nothing |
+| `--path=DIR` | Target directory to scaffold into. Default: `./<package>` under the current working directory. |
+| `--author="Name"` | Author name for `composer.json` and `LICENSE.md`. Default: `git config user.name`, falling back to `Jefferson Gonçalves` if unset. |
+| `--email=EMAIL` | Author email for `composer.json`. Default: `git config user.email`. |
+| `--no-git` | Skip `git init` and the first commit — scaffold files only. |
+| `--dry-run` | Print the planned file list (write vs. skip-if-exists) without writing anything or touching git. |
 
 Every argument/option is designed for scripted, non-interactive invocation — no prompts are ever shown.
+
+### Examples
+
+Basic package, everything defaulted (author/email from git config, written to `./laravel-cep`):
+
+```bash
+laravel-package create jeffersongoncalves/laravel-cep "Brazilian CEP (postal code) lookup for Laravel"
+```
+
+No description (left blank in `composer.json`/README):
+
+```bash
+laravel-package create jeffersongoncalves/laravel-cep
+```
+
+Custom target directory:
+
+```bash
+laravel-package create jeffersongoncalves/laravel-cep "Brazilian CEP lookup for Laravel" --path=/d/PROJETOS/jeffersongoncalves/laravel-cep
+```
+
+Explicit author/email (overrides git config, e.g. CI or a different identity):
+
+```bash
+laravel-package create jeffersongoncalves/laravel-cep "Brazilian CEP lookup for Laravel" \
+  --author="Jefferson Gonçalves" \
+  --email=jeffersongoncalves@gmail.com
+```
+
+Scaffold files only, no git repo (e.g. dropping into an already-initialized repo):
+
+```bash
+laravel-package create jeffersongoncalves/laravel-cep "Brazilian CEP lookup for Laravel" --no-git
+```
+
+Preview what would be created without writing anything:
+
+```bash
+laravel-package create jeffersongoncalves/laravel-cep "Brazilian CEP lookup for Laravel" --dry-run
+```
+
+Full invocation, all options combined:
+
+```bash
+laravel-package create jeffersongoncalves/laravel-cep "Brazilian CEP lookup for Laravel" \
+  --path=/d/PROJETOS/jeffersongoncalves/laravel-cep \
+  --author="Jefferson Gonçalves" \
+  --email=jeffersongoncalves@gmail.com \
+  --no-git \
+  --dry-run
+```
 
 ## Testing
 
