@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.5] - 2026-09-07
+
+### Bug Fixes
+
+- Move runtime deps out of require-dev
+- Correct generated composer.json for new Laravel packages
+
+### Documentation
+
+- Add usage examples and descriptive parameter tables to README
+
+### Other
+
+- Revert "fix: move runtime deps out of require-dev"
+
+This reverts commit fdfb324622135eedda2831ac8d3b15a3fa4bd832.
+
 ## [1.0.4] - 2026-09-07
 
 ### Bug Fixes
