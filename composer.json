@@ -55,5 +55,5 @@
     },
     "minimum-stability": "stable",
     "prefer-stable": true,
-    "bin": ["laravel-package"]
+    "bin": ["builds/laravel-package"]
 }
