@@ -5,6 +5,7 @@ namespace App\Commands;
 use App\Support\Scaffold;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Process;
+use Illuminate\Support\Str;
 use LaravelZero\Framework\Commands\Command;
 
 class CreateCommand extends Command
@@ -41,11 +42,16 @@ class CreateCommand extends Command
         $dryRun = (bool) $this->option('dry-run');
         $noGit = (bool) $this->option('no-git');
 
-        $namespace = Scaffold::studly($vendor).'\\'.Scaffold::studly($package);
-        $serviceProvider = Scaffold::studly($package).'ServiceProvider';
-        $facade = Scaffold::studly($package);
-        $title = Scaffold::studly($package);
-        $configFile = $package;
+        // spatie/laravel-package-tools strips the `laravel-` prefix in shortName(),
+        // which is what drives the published config filename. Mirror it so the
+        // namespace, classes and config file line up: laravel-cep => JeffersonGoncalves\Cep.
+        $base = Str::after($package, 'laravel-');
+
+        $namespace = Scaffold::studly($vendor).'\\'.Scaffold::studly($base);
+        $serviceProvider = Scaffold::studly($base).'ServiceProvider';
+        $facade = Scaffold::studly($base);
+        $title = Scaffold::studly($base);
+        $configFile = $base;
 
         $author = $this->option('author') ?: trim((string) Process::run('git config --get user.name')->output()) ?: 'Jefferson Gonçalves';
         $email = $this->option('email') ?: trim((string) Process::run('git config --get user.email')->output());
