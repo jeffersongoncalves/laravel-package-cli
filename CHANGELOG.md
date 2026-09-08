@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.7] - 2026-09-08
+
+### Features
+
+- Add --namespace, --keywords and --require to the create command
+
 ## [1.0.6] - 2026-09-08
 
 ### Bug Fixes
