@@ -4,9 +4,37 @@ namespace App\Support;
 
 class Scaffold
 {
+    /**
+     * Vendor slugs whose camel-case boundaries studly() cannot see:
+     * jeffersongoncalves reads as one lowercase word, so it would become
+     * Jeffersongoncalves. Anything unlisted falls back to studly().
+     */
+    public const VENDOR_NAMESPACES = [
+        'jeffersongoncalves' => 'JeffersonGoncalves',
+        'jeffersonsimaogoncalves' => 'JeffersonSimaoGoncalves',
+    ];
+
     public static function studly(string $value): string
     {
         return str_replace(['-', '_', ' '], '', ucwords(str_replace(['-', '_'], ' ', $value)));
+    }
+
+    public static function vendorNamespace(string $vendor): string
+    {
+        return self::VENDOR_NAMESPACES[strtolower($vendor)] ?? self::studly($vendor);
+    }
+
+    /**
+     * laravel-cep => JeffersonGoncalves\Cep. The `laravel-` prefix is dropped
+     * to mirror spatie/laravel-package-tools' shortName(), which is what drives
+     * the published config filename. Override the whole thing with --namespace
+     * when the name's casing isn't a plain studly (posthog => PostHog).
+     */
+    public static function rootNamespace(string $vendor, string $package): string
+    {
+        $name = self::studly(preg_replace('/^laravel-/', '', $package));
+
+        return self::vendorNamespace($vendor).'\\'.($name ?: 'Package');
     }
 
     public static function license(string $author, string $year): string

@@ -66,7 +66,7 @@ laravel-package create vendor/package [description] [options]
 | Option | Description |
 |--------|-------------|
 | `--path=DIR` | Target directory to scaffold into. Default: `./<package>` under the current working directory. |
-| `--namespace=NS` | PSR-4 root namespace, e.g. `"JeffersonGoncalves\PostHog"`. Its last segment also drives the Service Provider, Facade and README title. Default: `StudlyVendor\StudlyPackage` — use this whenever the correct casing can't be derived from the kebab-case slug (`posthog` → `Posthog`, never `PostHog`). |
+| `--namespace=NS` | PSR-4 root namespace override, e.g. `"JeffersonGoncalves\PostHog"`. Its last segment also drives the Service Provider, Facade and README title. Defaults to `<VendorRoot>\<StudlyName>` (see below) — pass it whenever the name's casing isn't a plain studly of the slug (`posthog` → `Posthog`, never `PostHog`). |
 | `--keywords=LIST` | Comma-separated `composer.json` keywords. Default: `laravel,<package>`. |
 | `--require=LIST` | Extra runtime dependencies, comma-separated `name:constraint`. When any `illuminate/*` entry is given, the default `illuminate/contracts` is dropped so it isn't dragged in alongside. |
 | `--author="Name"` | Author name for `composer.json` and `LICENSE.md`. Default: `git config user.name`, falling back to `Jefferson Gonçalves` if unset. |
@@ -103,6 +103,19 @@ laravel-package create jeffersongoncalves/laravel-cep "Brazilian CEP lookup for 
   --author="Jefferson Gonçalves" \
   --email=jeffersongoncalves@gmail.com
 ```
+
+### Namespace
+
+The `laravel-` prefix is dropped, mirroring `spatie/laravel-package-tools`' `shortName()` — which is also what names the published config file.
+
+| Package | Namespace | Classes | Config |
+|---------|-----------|---------|--------|
+| `jeffersongoncalves/laravel-cep` | `JeffersonGoncalves\Cep` | `CepServiceProvider`, `Facades\Cep` | `config/cep.php` |
+| `acme/laravel-widget` | `Acme\Widget` | `WidgetServiceProvider`, `Facades\Widget` | `config/widget.php` |
+
+Vendor slugs are studly-cased, with `jeffersongoncalves` → `JeffersonGoncalves` and `jeffersonsimaogoncalves` → `JeffersonSimaoGoncalves` mapped explicitly (`Scaffold::VENDOR_NAMESPACES`) since studly can't see those word boundaries.
+
+The **name** half is still a plain studly, so a name whose real casing has an internal capital needs `--namespace`: `laravel-posthog` derives `Posthog`, not `PostHog`.
 
 Explicit namespace casing, keywords and dependencies (nothing the slug can reveal):
 

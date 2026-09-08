@@ -50,11 +50,11 @@ class CreateCommand extends Command
         // namespace, classes and config file line up: laravel-cep => JeffersonGoncalves\Cep.
         $base = Str::after($package, 'laravel-');
 
-        // Casing can't be derived from a kebab-case package name (posthog => Posthog,
-        // never PostHog), so --namespace overrides it and its last segment drives
-        // the class names. The config filename stays kebab to match shortName().
+        // The name's casing still can't be derived from a kebab slug (posthog =>
+        // Posthog, never PostHog), so --namespace overrides the default and its
+        // last segment drives the class names.
         $namespace = trim((string) $this->option('namespace'), '\\')
-            ?: Scaffold::studly($vendor).'\\'.Scaffold::studly($base);
+            ?: Scaffold::rootNamespace($vendor, $package);
         $class = Str::afterLast($namespace, '\\');
         $serviceProvider = $class.'ServiceProvider';
         $facade = $class;
