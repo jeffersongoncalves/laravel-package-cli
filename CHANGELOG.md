@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.0.11] - 2026-09-08
+
+### Bug Fixes
+
+- **ci:** Publish release as draft until PHAR asset is attached
+
 ## [1.0.10] - 2026-09-08
 
 ### Bug Fixes
