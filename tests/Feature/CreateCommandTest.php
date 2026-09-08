@@ -37,6 +37,34 @@ it('strips the laravel- prefix from the namespace and class names', function () 
     File::deleteDirectory($dir);
 });
 
+it('honours --namespace, --keywords and --require', function () {
+    $dir = sys_get_temp_dir().'/laravel-package-cli-test-'.uniqid();
+
+    $this->artisan('create', [
+        'vendor-package' => 'jeffersongoncalves/laravel-posthog',
+        '--path' => $dir,
+        '--namespace' => 'JeffersonGoncalves\\PostHog',
+        '--keywords' => 'laravel, posthog, analytics',
+        '--require' => 'illuminate/http:^12.0|^13.0,illuminate/support:^12.0|^13.0',
+        '--no-git' => true,
+    ])->assertExitCode(0);
+
+    $composer = json_decode(file_get_contents($dir.'/composer.json'), true);
+
+    expect($composer['autoload']['psr-4'])->toHaveKey('JeffersonGoncalves\\PostHog\\')
+        ->and($composer['extra']['laravel']['providers'])->toBe(['JeffersonGoncalves\\PostHog\\PostHogServiceProvider'])
+        ->and($composer['extra']['laravel']['aliases'])->toBe(['PostHog' => 'JeffersonGoncalves\\PostHog\\Facades\\PostHog'])
+        ->and($composer['keywords'])->toBe(['laravel', 'posthog', 'analytics'])
+        ->and($composer['type'])->toBe('library')
+        ->and($composer['require'])->not->toHaveKey('illuminate/contracts')
+        ->and($composer['require'])->toHaveKey('illuminate/support')
+        ->and(is_file($dir.'/src/PostHogServiceProvider.php'))->toBeTrue()
+        ->and(is_file($dir.'/src/Facades/PostHog.php'))->toBeTrue()
+        ->and(is_file($dir.'/config/posthog.php'))->toBeTrue();
+
+    File::deleteDirectory($dir);
+});
+
 it('rejects a vendor-package without a slash', function () {
     $this->artisan('create', [
         'vendor-package' => 'not-a-vendor-package',

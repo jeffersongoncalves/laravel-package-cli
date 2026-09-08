@@ -21,6 +21,9 @@ class CreateCommand extends Command
         {vendor-package : vendor/package, e.g. jeffersongoncalves/laravel-cep}
         {description? : short description of the package}
         {--path= : target directory (default: ./<package> under cwd)}
+        {--namespace= : PSR-4 root namespace, e.g. "JeffersonGoncalves\PostHog" (default: StudlyVendor\StudlyPackage)}
+        {--keywords= : comma-separated composer keywords (default: laravel,<package>)}
+        {--require= : extra runtime deps, comma-separated name:constraint}
         {--author= : defaults to `git config user.name`}
         {--email= : defaults to `git config user.email`}
         {--no-git : skip git init/commit}
@@ -47,10 +50,15 @@ class CreateCommand extends Command
         // namespace, classes and config file line up: laravel-cep => JeffersonGoncalves\Cep.
         $base = Str::after($package, 'laravel-');
 
-        $namespace = Scaffold::studly($vendor).'\\'.Scaffold::studly($base);
-        $serviceProvider = Scaffold::studly($base).'ServiceProvider';
-        $facade = Scaffold::studly($base);
-        $title = Scaffold::studly($base);
+        // Casing can't be derived from a kebab-case package name (posthog => Posthog,
+        // never PostHog), so --namespace overrides it and its last segment drives
+        // the class names. The config filename stays kebab to match shortName().
+        $namespace = trim((string) $this->option('namespace'), '\\')
+            ?: Scaffold::studly($vendor).'\\'.Scaffold::studly($base);
+        $class = Str::afterLast($namespace, '\\');
+        $serviceProvider = $class.'ServiceProvider';
+        $facade = $class;
+        $title = $class;
         $configFile = $base;
 
         $author = $this->option('author') ?: trim((string) Process::run('git config --get user.name')->output()) ?: 'Jefferson Gonçalves';
@@ -87,21 +95,34 @@ class CreateCommand extends Command
             }
         }
 
+        $keywords = array_values(array_filter(array_map('trim', explode(',', (string) $this->option('keywords')))));
+
+        $extraRequire = [];
+        foreach (array_filter(array_map('trim', explode(',', (string) $this->option('require')))) as $dep) {
+            [$name, $constraint] = array_pad(explode(':', $dep, 2), 2, '*');
+            $extraRequire[trim($name)] = trim($constraint);
+        }
+
+        $require = ['php' => '^8.2', 'spatie/laravel-package-tools' => '^1.16'];
+        // Only default to illuminate/contracts when --require names no illuminate/* itself,
+        // otherwise a package asking for http+support would drag contracts along too.
+        if (! preg_grep('#^illuminate/#', array_keys($extraRequire))) {
+            $require['illuminate/contracts'] = '^12.0|^13.0';
+        }
+        $require = array_merge($require, $extraRequire);
+
         $composerJson = [
             'name' => "$vendor/$package",
             'description' => $description,
-            'keywords' => ['laravel', $package],
+            'keywords' => $keywords ?: ['laravel', $package],
             'homepage' => "https://github.com/$vendor/$package",
             'license' => 'MIT',
-            'authors' => [['name' => $author, 'email' => $email]],
-            'require' => [
-                'php' => '^8.2',
-                'spatie/laravel-package-tools' => '^1.16',
-                'illuminate/contracts' => '^12.0|^13.0',
-            ],
+            'type' => 'library',
+            'authors' => [['name' => $author, 'email' => $email, 'role' => 'Developer']],
+            'require' => $require,
             'require-dev' => [
                 'larastan/larastan' => '^3.0',
-                'laravel/pint' => '^1.21',
+                'laravel/pint' => '^1.24',
                 'orchestra/testbench' => '^10.0|^11.0',
                 'pestphp/pest' => '^3.0|^4.0',
                 'pestphp/pest-plugin-laravel' => '^3.0|^4.0',

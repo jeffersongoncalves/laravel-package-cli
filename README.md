@@ -66,6 +66,9 @@ laravel-package create vendor/package [description] [options]
 | Option | Description |
 |--------|-------------|
 | `--path=DIR` | Target directory to scaffold into. Default: `./<package>` under the current working directory. |
+| `--namespace=NS` | PSR-4 root namespace, e.g. `"JeffersonGoncalves\PostHog"`. Its last segment also drives the Service Provider, Facade and README title. Default: `StudlyVendor\StudlyPackage` — use this whenever the correct casing can't be derived from the kebab-case slug (`posthog` → `Posthog`, never `PostHog`). |
+| `--keywords=LIST` | Comma-separated `composer.json` keywords. Default: `laravel,<package>`. |
+| `--require=LIST` | Extra runtime dependencies, comma-separated `name:constraint`. When any `illuminate/*` entry is given, the default `illuminate/contracts` is dropped so it isn't dragged in alongside. |
 | `--author="Name"` | Author name for `composer.json` and `LICENSE.md`. Default: `git config user.name`, falling back to `Jefferson Gonçalves` if unset. |
 | `--email=EMAIL` | Author email for `composer.json`. Default: `git config user.email`. |
 | `--no-git` | Skip `git init` and the first commit — scaffold files only. |
@@ -101,6 +104,15 @@ laravel-package create jeffersongoncalves/laravel-cep "Brazilian CEP lookup for 
   --email=jeffersongoncalves@gmail.com
 ```
 
+Explicit namespace casing, keywords and dependencies (nothing the slug can reveal):
+
+```bash
+laravel-package create jeffersongoncalves/laravel-posthog "PHP/Laravel client for the PostHog API" \
+  --namespace="JeffersonGoncalves\PostHog" \
+  --keywords="laravel,posthog,analytics,feature-flags" \
+  --require="illuminate/http:^12.0|^13.0,illuminate/support:^12.0|^13.0"
+```
+
 Scaffold files only, no git repo (e.g. dropping into an already-initialized repo):
 
 ```bash
@@ -118,6 +130,9 @@ Full invocation, all options combined:
 ```bash
 laravel-package create jeffersongoncalves/laravel-cep "Brazilian CEP lookup for Laravel" \
   --path=/d/PROJETOS/jeffersongoncalves/laravel-cep \
+  --namespace="JeffersonGoncalves\Cep" \
+  --keywords="laravel,cep,correios" \
+  --require="illuminate/http:^12.0|^13.0" \
   --author="Jefferson Gonçalves" \
   --email=jeffersongoncalves@gmail.com \
   --no-git \
