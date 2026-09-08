@@ -113,9 +113,18 @@ The `laravel-` prefix is dropped, mirroring `spatie/laravel-package-tools`' `sho
 | `jeffersongoncalves/laravel-cep` | `JeffersonGoncalves\Cep` | `CepServiceProvider`, `Facades\Cep` | `config/cep.php` |
 | `acme/laravel-widget` | `Acme\Widget` | `WidgetServiceProvider`, `Facades\Widget` | `config/widget.php` |
 
-Vendor slugs are studly-cased, with `jeffersongoncalves` → `JeffersonGoncalves` and `jeffersonsimaogoncalves` → `JeffersonSimaoGoncalves` mapped explicitly (`Scaffold::VENDOR_NAMESPACES`) since studly can't see those word boundaries.
+Both halves are studly-cased, which cannot see camel-case boundaries inside a single lowercase word (`jeffersongoncalves` → `Jeffersongoncalves`, `posthog` → `Posthog`). Teach it once in `~/.package/vendornamespace.json`, shared with `filament-plugin-cli`:
 
-The **name** half is still a plain studly, so a name whose real casing has an internal capital needs `--namespace`: `laravel-posthog` derives `Posthog`, not `PostHog`.
+```json
+{
+    "jeffersongoncalves": "JeffersonGoncalves",
+    "posthog": "PostHog"
+}
+```
+
+With those two entries, `jeffersongoncalves/laravel-posthog` derives `JeffersonGoncalves\PostHog` (and `PostHogServiceProvider`, `Facades\PostHog`, `config/posthog.php`) with no flags at all. Lookups are per whole slug and case-insensitive; unlisted slugs fall back to studly. See [laravel-zero-package-scaffold](https://github.com/jeffersongoncalves/laravel-zero-package-scaffold) for the file's full contract.
+
+`--namespace` remains for one-offs you don't want in the shared file.
 
 Explicit namespace casing, keywords and dependencies (nothing the slug can reveal):
 
