@@ -9,7 +9,7 @@
 Scaffold new open-source Laravel packages with git already configured, built with [Laravel Zero](https://laravel-zero.com/). Fully non-interactive — every input is an argument or a flag, so it's meant to be driven by an AI agent (e.g. Claude Code's `laravel-package-creator` skill) as much as by a human.
 
 <p align="center">
-  <a href="https://github.com/jeffersongoncalves/laravel-package-cli/actions"><img src="https://github.com/jeffersongoncalves/laravel-package-cli/actions/workflows/run-tests.yml/badge.svg" alt="Tests" /></a>
+  <a href="https://github.com/jeffersongoncalves/laravel-package-cli/actions"><img src="https://github.com/jeffersongoncalves/laravel-package-cli/actions/workflows/tests.yml/badge.svg" alt="Tests" /></a>
   <a href="https://packagist.org/packages/jeffersongoncalves/laravel-package-cli"><img src="https://img.shields.io/packagist/dt/jeffersongoncalves/laravel-package-cli" alt="Total Downloads" /></a>
   <a href="https://github.com/jeffersongoncalves/laravel-package-cli/blob/main/LICENSE"><img src="https://img.shields.io/github/license/jeffersongoncalves/laravel-package-cli" alt="License" /></a>
   <img src="https://img.shields.io/badge/php-%3E%3D8.2-8892BF" alt="PHP 8.2+" />
