@@ -48,7 +48,8 @@ it('strips the laravel- prefix from the namespace and class names', function () 
         ->and(is_file($dir.'/src/CepServiceProvider.php'))->toBeTrue()
         ->and(is_file($dir.'/src/Facades/Cep.php'))->toBeTrue()
         ->and(is_file($dir.'/config/cep.php'))->toBeTrue()
-        ->and(file_get_contents($dir.'/src/CepServiceProvider.php'))->toContain("->name('laravel-cep')");
+        ->and(file_get_contents($dir.'/src/CepServiceProvider.php'))->toContain("->name('laravel-cep')")
+        ->and(file_get_contents($dir.'/.github/workflows/dependabot-auto-merge.yml'))->toContain('--match-head-commit');
 
     File::deleteDirectory($dir);
 });
